@@ -34,5 +34,14 @@ test('une commande de chocolat avec 1 sucre donne H:1:0', () => {
 //méthode message
 test('un message envoyé avec le préfixe M:', () => {
   const traducteur = new Traducteur();
-  expect(traducteur.message('Bonjour')).toBe('M:Bonjour');
+  expect(traducteur.message('Reçu')).toBe('M:Reçu');
+});
+//methode commande 
+test('la commande de thé avec 1 sucre est envoyée à la machine', () => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+
+  traducteur.commander('thé', 1);
+
+  expect(machine.envoyer).toHaveBeenCalledWith('T:1:0');
 });
