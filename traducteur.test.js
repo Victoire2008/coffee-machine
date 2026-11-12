@@ -84,3 +84,57 @@ test('trop d\'argent : la boisson est quand même préparée', () => {
 
   expect(machine.envoyer).toHaveBeenCalledWith('C::');
 });
+
+//  Itération 3 
+
+test('un jus d\'orange donne O::', () => {
+  const traducteur = new Traducteur();
+  expect(traducteur.traduire('jus d\'orange')).toBe('O::');
+});
+
+test('un café extra chaud sans sucre donne Ch::', () => {
+  const traducteur = new Traducteur();
+  expect(traducteur.traduire('café', 0, true)).toBe('Ch::');
+});
+
+test('un chocolat extra chaud avec 1 sucre donne Hh:1:0', () => {
+  const traducteur = new Traducteur();
+  expect(traducteur.traduire('chocolat', 1, true)).toBe('Hh:1:0');
+});
+
+test('un thé extra chaud avec 2 sucres donne Th:2:0', () => {
+  const traducteur = new Traducteur();
+  expect(traducteur.traduire('thé', 2, true)).toBe('Th:2:0');
+});
+
+test('un jus d\'orange ne peut pas être extra chaud', () => {
+  const traducteur = new Traducteur();
+  expect(traducteur.traduire('jus d\'orange', 0, true)).toBe('O::');
+});
+
+test('un jus d\'orange est envoyé s\'il y a assez d\'argent', () => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+
+  traducteur.commander({ boisson: 'jus d\'orange', argent: 400 });
+
+  expect(machine.envoyer).toHaveBeenCalledWith('O::');
+});
+
+test('argent insuffisant pour un jus d\'orange : message du montant manquant', () => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+
+  traducteur.commander({ boisson: 'jus d\'orange', argent: 300 });
+
+  expect(machine.envoyer).toHaveBeenCalledWith('M:Il manque 100 FCFA');
+});
+
+test('une commande extra chaude est envoyée à la machine', () => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+
+  traducteur.commander({ boisson: 'thé', sucres: 2, argent: 500, extraChaud: true });
+
+  expect(machine.envoyer).toHaveBeenCalledWith('Th:2:0');
+});
