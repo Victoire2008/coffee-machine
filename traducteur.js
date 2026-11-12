@@ -1,3 +1,4 @@
+const prix = { 'thé': 100, 'café': 300, 'chocolat': 500 };
 class Traducteur {
 
    constructor(machine) {
@@ -18,10 +19,17 @@ class Traducteur {
     return `M:${texte}`;
   }
 
-  commander(boisson, sucres = 0) {
-    const commande = this.traduire(boisson, sucres);
-    this.machine.envoyer(commande);
+  commander(commande) {
+    const { boisson, sucres = 0, argent = 0 } = commande;
+    const manque = prix[boisson] - argent;
+
+    if (manque > 0) {
+      this.machine.envoyer(this.message(`Il manque ${manque} FCFA`));
+      return;
     }
+
+    this.machine.envoyer(this.traduire(boisson, sucres));
+  }
 }
 
 

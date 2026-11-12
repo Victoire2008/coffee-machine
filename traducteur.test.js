@@ -34,14 +34,53 @@ test('une commande de chocolat avec 1 sucre donne H:1:0', () => {
 //méthode message
 test('un message envoyé avec le préfixe M:', () => {
   const traducteur = new Traducteur();
-  expect(traducteur.message('Reçu')).toBe('M:Reçu');
+  expect(traducteur.message('Bonjour')).toBe('M:Bonjour');
 });
-//methode commande 
-test('la commande de thé avec 1 sucre est envoyée à la machine', () => {
+
+//itération 2
+
+test('une commande avec assez d\'argent est envoyée à la machine', () => {
   const machine = { envoyer: jest.fn() };
   const traducteur = new Traducteur(machine);
 
-  traducteur.commander('thé', 1);
+  traducteur.commander({ boisson: 'thé', sucres: 1, argent: 500 });
 
   expect(machine.envoyer).toHaveBeenCalledWith('T:1:0');
+});
+
+test('le montant exact suffit pour un thé', () => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+
+  traducteur.commander({ boisson: 'thé', argent: 250 });
+
+  expect(machine.envoyer).toHaveBeenCalledWith('T::');
+});
+
+test('argent insuffisant pour un café : message avec le montant manquant', () => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+
+  traducteur.commander({ boisson: 'café', argent: 250 });
+
+  expect(machine.envoyer).toHaveBeenCalledWith('M:Il manque 50 FCFA');
+  expect(machine.envoyer).toHaveBeenCalledTimes(1);
+});
+
+test('argent insuffisant pour un chocolat : message avec le montant manquant', () => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+
+  traducteur.commander({ boisson: 'chocolat', argent: 100 });
+
+  expect(machine.envoyer).toHaveBeenCalledWith('M:Il manque 400 FCFA');
+});
+
+test('trop d\'argent : la boisson est quand même préparée', () => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+
+  traducteur.commander({ boisson: 'café', argent: 2000 });
+
+  expect(machine.envoyer).toHaveBeenCalledWith('C::');
 });
