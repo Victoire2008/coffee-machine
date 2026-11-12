@@ -9,6 +9,9 @@ class Traducteur {
 
     return `${code}::`;
   }
+  message(texte) {
+    return `M:${texte}`;
+  }
 }
 
 module.exports = Traducteur;

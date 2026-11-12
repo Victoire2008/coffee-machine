@@ -30,3 +30,9 @@ test('une commande de chocolat avec 1 sucre donne H:1:0', () => {
   const traducteur = new Traducteur();
   expect(traducteur.traduire('chocolat', 1)).toBe('H:1:0');
 });
+
+//méthode message
+test('un message envoyé avec le préfixe M:', () => {
+  const traducteur = new Traducteur();
+  expect(traducteur.message('Bonjour')).toBe('M:Bonjour');
+});
