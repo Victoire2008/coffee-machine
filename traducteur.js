@@ -5,6 +5,8 @@ const boissonsChaudes = ['thé', 'café', 'chocolat'];
 class Traducteur {
   constructor(machine) {
     this.machine = machine;
+    this.ventes = {};
+    this.total = 0;
   }
 
   traduire(boisson, sucres = 0, extraChaud = false) {
@@ -35,7 +37,20 @@ class Traducteur {
     }
 
     this.machine.envoyer(this.traduire(boisson, sucres, extraChaud));
+    this.enregistrerVente(boisson);
   }
+
+  enregistrerVente(boisson) {
+    this.ventes[boisson] = (this.ventes[boisson] || 0) + 1;
+    this.total += prix[boisson];
+  }
+  rapport() {
+    const lignes = Object.keys(prix).map((boisson) => `${boisson}: ${this.ventes[boisson] || 0} ventes`);
+    return ['Rapport des ventes', ...lignes, `Total: ${this.total} FCFA`].join('\n');
+  }
+    imprimerRapport() {
+        console.log(this.rapport());
+    }
 }
 
 module.exports = Traducteur;

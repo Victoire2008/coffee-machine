@@ -138,3 +138,30 @@ test('une commande extra chaude est envoyée à la machine', () => {
 
   expect(machine.envoyer).toHaveBeenCalledWith('Th:2:0');
 });
+
+//itération 4
+test('le rapport est vide au départ' , () => {
+  const traducteur = new Traducteur();
+  expect(traducteur.rapport()).toBe('Rapport des ventes\nthé: 0 ventes\ncafé: 0 ventes\nchocolat: 0 ventes\njus d\'orange: 0 ventes\nTotal: 0 FCFA');
+});
+
+test('le rapport compte chaque boisson vendu et le total', () => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+  traducteur.commander({ boisson: 'thé', argent: 100 });
+  traducteur.commander({ boisson: 'café', argent: 300 });
+  traducteur.commander({ boisson: 'chocolat', argent: 100 }); //argent insuffisant, ne doit pas être compté
+  expect(traducteur.rapport()).toBe('Rapport des ventes\nthé: 1 ventes\ncafé: 1 ventes\nchocolat: 0 ventes\njus d\'orange: 0 ventes\nTotal: 400 FCFA');
+});
+
+test ('le rapport est affiché dans la console',() => {
+  const machine = { envoyer: jest.fn() };
+  const traducteur = new Traducteur(machine);
+  const espion = jest.spyOn(console, 'log').mockImplementation();
+
+  traducteur.commander({ boisson: 'thé', argent: 100 });
+  traducteur.imprimerRapport();
+
+  expect(espion).toHaveBeenCalledWith('Rapport des ventes\nthé: 1 ventes\ncafé: 0 ventes\nchocolat: 0 ventes\njus d\'orange: 0 ventes\nTotal: 100 FCFA');
+  espion.mockRestore();
+});
